@@ -1,9 +1,10 @@
-import { template } from './template';
 import {
-  any2Hsl,
-  hsl2Hex, hsl2Hsv,
-  hsl2Rgb, hsv2Hex, rgb2Hsv
+  ColorHSL, ColorHSV, ColorRGB, hex2Hsl, hex2Hsv, hex2Rgb,
+  hsl2Hex, hsv2Hex, normalizeHex, rgb2Hex
 } from '@tanbo/color';
+
+import { template } from './template';
+import { getPosition } from './utiils';
 
 export interface Options {
   colors?: string[];
@@ -13,26 +14,54 @@ export interface Options {
 export class Core {
   readonly host = document.createElement('div');
 
-  set value(v: string) {
-    this._value = v;
-    this.render(v);
+  set hex(color: string) {
+    this._hex = normalizeHex(color);
+    this._hsl = hex2Hsl(this._hex);
+    this._rgb = hex2Rgb(this._hex);
+
+    this.hsv = hex2Hsv(this._hex);
+    this.render(this._hex);
   }
 
-  get value() {
-    return this._value;
+  get hex() {
+    return this._hex;
   }
 
-  private _value = '#fff';
+  set hsl(color: ColorHSL) {
+    this.hex = hsl2Hex(color);
+  }
+
+  get hsl(): ColorHSL {
+    return this._hsl;
+  }
+
+  set rgb(color: ColorRGB) {
+    this.hex = rgb2Hex(color);
+  }
+
+  get rgb(): ColorRGB {
+    return this._rgb;
+  }
+
+  private _hex: string;
+  private _hsl: ColorHSL;
+  private _rgb: ColorRGB;
+
+  private hsv: ColorHSV;
   private container: HTMLElement;
   private valueViewer: HTMLElement;
   private palette: HTMLElement;
   private palettePoint: HTMLElement;
-  private hue: HTMLElement;
+  private hueBar: HTMLElement;
   private huePoint: HTMLElement;
 
   private hslInputs: HTMLInputElement[];
   private rgbInputs: HTMLInputElement[];
   private hexInput: HTMLInputElement;
+
+  private touching = false;
+  private paletteX: number;
+  private hueY: number;
 
   constructor(selector: string | HTMLElement, options: Options = {}) {
     if (typeof selector === 'string') {
@@ -44,61 +73,147 @@ export class Core {
     this.host.innerHTML = template;
 
     if (Array.isArray(options.colors)) {
-      const colorGroup = this.host.querySelector('.tanbo-color-picker-swatches');
-      const nodes = options.colors.map(color => {
-        const el = document.createElement('div');
-        el.style.background = color;
-        colorGroup.appendChild(el);
-        return {
-          el,
-          color
-        }
-      });
-      colorGroup.addEventListener('click', (ev: Event) => {
-        for (const item of nodes) {
-          if (item.el === ev.target) {
-            this.render(item.color);
-          }
-        }
-      });
+      this.initColorOptions(options.colors);
     }
 
     this.container.appendChild(this.host);
     this.valueViewer = this.host.querySelector('.tanbo-color-picker-value');
     this.palette = this.host.querySelector('.tanbo-color-picker-palette');
     this.palettePoint = this.host.querySelector('.tanbo-color-picker-palette-point');
-    this.hue = this.host.querySelector('.tanbo-color-picker-hue-pointer-wrap');
+    this.hueBar = this.host.querySelector('.tanbo-color-picker-hue-bar');
     this.huePoint = this.host.querySelector('.tanbo-color-picker-hue-pointer');
 
     this.hslInputs = Array.from(this.host.querySelectorAll('.tanbo-color-picker-hsl input'));
     this.rgbInputs = Array.from(this.host.querySelectorAll('.tanbo-color-picker-rgb input'));
     this.hexInput = this.host.querySelector('.tanbo-color-picker-hex input');
 
-    this.value = options.value || '#00f';
+    this.hex = options.value || '#f00';
+
+    this.bindingEvents();
   }
 
   private render(color: string) {
-    const hsl = any2Hsl(color);
-    if (hsl === 'unknown') {
-      return;
-    }
-    const rgb = hsl2Rgb(hsl);
-    const hsb = hsl2Hsv(hsl);
-    const hex = hsl2Hex(hsl);
+    this.hslInputs[0].value = this.hsl.h + '';
+    this.hslInputs[1].value = this.hsl.s + '';
+    this.hslInputs[2].value = this.hsl.l + '';
 
-    this.hslInputs[0].value = hsl.h + '';
-    this.hslInputs[1].value = hsl.s + '';
-    this.hslInputs[2].value = hsl.l + '';
+    this.rgbInputs[0].value = this.rgb.r + '';
+    this.rgbInputs[1].value = this.rgb.g + '';
+    this.rgbInputs[2].value = this.rgb.b + '';
 
-    this.rgbInputs[0].value = rgb.r + '';
-    this.rgbInputs[1].value = rgb.g + '';
-    this.rgbInputs[2].value = rgb.b + '';
-
-    this.hexInput.value = hex;
+    this.hexInput.value = color;
     this.valueViewer.style.background = color;
-    this.palette.style.background = `linear-gradient(to right, #fff, hsl(${hsb.h}, 100%, 50%))`;
-    this.palettePoint.style.left = `calc(${hsb.s}% - 6px)`;
-    this.palettePoint.style.top = `calc(${100 - hsb.v}% - 6px)`;
-    this.huePoint.style.top = `calc(${hsb.h / 360 * 100}% - 4px)`;
+    this.palette.style.background = `linear-gradient(to right, #fff, hsl(${this.hsv.h}, 100%, 50%))`;
+    this.palettePoint.style.left = `calc(${this.touching ? this.paletteX : this.hsv.s}% - 6px)`;
+    this.palettePoint.style.top = `calc(${100 - this.hsv.v}% - 6px)`;
+    this.huePoint.style.top = `calc(${this.touching ? this.hueY : this.hsv.h / 360 * 100}% - 4px)`;
+  }
+
+  private bindingEvents() {
+    this.bindPaletteEvent();
+    this.bindHueBarEvent();
+  }
+
+  private bindPaletteEvent() {
+    const update = (ev: MouseEvent) => {
+      const position = getPosition(this.palette);
+      const offsetX = ev.clientX - position.left;
+      const offsetY = ev.clientY - position.top;
+
+      let s = offsetX / 130 * 100;
+      let v = 100 - offsetY / 130 * 100;
+
+      s = Math.max(0, s);
+      s = Math.min(100, s);
+
+      v = Math.max(0, v);
+      v = Math.min(100, v);
+
+      this.paletteX = s;
+      this.hex = hsv2Hex({
+        h: this.hsv.h,
+        s,
+        v
+      });
+    };
+
+    const mouseDownFn = (ev: MouseEvent) => {
+      this.touching = true;
+
+      update(ev);
+      document.addEventListener('mousemove', mouseMoveFn);
+      document.addEventListener('mouseup', mouseUpFn);
+    };
+
+    const mouseMoveFn = (ev: MouseEvent) => {
+      update(ev);
+    };
+
+    const mouseUpFn = () => {
+      this.touching = false;
+      document.removeEventListener('mousemove', mouseMoveFn);
+      document.removeEventListener('mouseup', mouseUpFn);
+    };
+
+    this.palette.addEventListener('mousedown', mouseDownFn);
+  }
+
+  private bindHueBarEvent() {
+    const update = (ev: MouseEvent) => {
+      const position = getPosition(this.hueBar);
+      let offsetY = ev.clientY - position.top;
+
+      offsetY = Math.max(0, offsetY);
+      offsetY = Math.min(100, offsetY);
+
+      const h = 360 / 100 * offsetY;
+
+      this.hueY = offsetY;
+      this.hex = hsv2Hex({
+        h,
+        s: this.hsv.s,
+        v: this.hsv.v
+      });
+    };
+
+    const mouseDownFn = (ev: MouseEvent) => {
+      this.touching = true;
+      this.paletteX = this.hsv.s;
+      update(ev);
+      document.addEventListener('mousemove', mouseMoveFn);
+      document.addEventListener('mouseup', mouseUpFn);
+    };
+
+    const mouseMoveFn = (ev: MouseEvent) => {
+      update(ev);
+    };
+
+    const mouseUpFn = () => {
+      this.touching = false;
+      document.removeEventListener('mousemove', mouseMoveFn);
+      document.removeEventListener('mouseup', mouseUpFn);
+    };
+
+    this.hueBar.addEventListener('mousedown', mouseDownFn);
+  }
+
+  private initColorOptions(colors: string[]) {
+    const colorGroup = this.host.querySelector('.tanbo-color-picker-swatches');
+    const nodes = colors.map(color => {
+      const el = document.createElement('div');
+      el.style.background = color;
+      colorGroup.appendChild(el);
+      return {
+        el,
+        color
+      }
+    });
+    colorGroup.addEventListener('click', (ev: Event) => {
+      for (const item of nodes) {
+        if (item.el === ev.target) {
+          this.hex = item.color;
+        }
+      }
+    });
   }
 }
