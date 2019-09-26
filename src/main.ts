@@ -1,3 +1,5 @@
+import { createPicker } from './lib/color-picker';
 
 import './lib/assets/index.scss';
-import './lib/assets/icons/style.css';
+
+createPicker('#picker');

@@ -1,0 +1,159 @@
+.tanbo-color-picker {
+  display: inline-block;
+  background-color: #fff;
+  width: 165px;
+  border: 1px solid #ccc;
+  font-size: 12px;
+  box-sizing: content-box;
+  padding: 6px;
+}
+
+.tanbo-color-picker-viewer {
+  height: 130px;
+  padding-bottom: 10px;
+}
+
+.tanbo-color-picker-palette {
+  height: 130px;
+  width: 130px;
+  float: left;
+  position: relative;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(255, 0, 0, 1));
+
+  &:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+  }
+}
+
+.tanbo-color-picker-pick-wrap {
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: -4px;
+  bottom: -4px;
+}
+
+.tanbo-color-picker-pick {
+  width: 1em;
+  height: 1em;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
+  position: absolute;
+}
+
+.tanbo-color-picker-tools {
+  float: left;
+  padding-left: 10px;
+}
+
+.tanbo-color-picker-value {
+  width: 20px;
+  height: 20px;
+  background-color: #ccc;
+  margin-bottom: 10px;
+}
+
+.tanbo-color-picker-hue-bar {
+  flex: 1;
+  background: linear-gradient(#f00, #f90, #ff0, #0f0, #0ff, #00f, #f09, #f00);
+  height: 100px;
+  width: 20px;
+  position: relative;
+}
+
+.tanbo-color-picker-hue-pointer-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -3px;
+  bottom: 5px;
+}
+
+.tanbo-color-picker-hue-pointer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 0;
+
+  &:before, &:after {
+    contain: size style layout;
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-width: 4px 7px;
+    border-style: solid;
+    top: 0;
+  }
+
+  &:before {
+    border-color: transparent transparent transparent $color-dark;
+    right: -8px;
+  }
+
+  &:after {
+    border-color: transparent $color-dark transparent transparent;
+    left: 12px;
+  }
+}
+
+.tanbo-color-picker-inputs {
+  line-height: 22px;
+
+  > div {
+    display: flex;
+    padding: 4px 0;
+
+    > div {
+      flex: 1;
+      display: flex;
+      padding: 0 4px;
+
+      input {
+        flex: 1;
+        width: 100%;
+        margin-left: 5px;
+        outline: 0;
+        border: 1px solid $color-light;
+        border-radius: 3px;
+        padding: 3px 5px;
+        text-align: center;
+        -moz-appearance: textfield;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+        }
+      }
+    }
+  }
+}
+
+.tanbo-color-picker-swatches {
+  font-size: 0;
+  padding: 3px;
+  background: repeating-linear-gradient(-45deg, $color-light, $color-light 5px, #fff 0, #fff 10px);
+
+  div {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 3px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+    transition: transform .1s;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+}
