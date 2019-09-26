@@ -10,21 +10,21 @@ export const template = `
     </div>
   </div>
 </div>
-<div class="tanbo-color-picker-inputs">
+<form class="tanbo-color-picker-inputs">
   <div class="tanbo-color-picker-hsl">
-    <div>H <input type="number"></div>
-    <div>S <input type="number"></div>
-    <div>L <input type="number"></div>
+    <div>H <input data-model="H" min="0" max="360" type="number"></div>
+    <div>S <input data-model="S" min="0" max="100" type="number"></div>
+    <div>L <input data-model="L" min="0" max="100" type="number"></div>
   </div>
   <div class="tanbo-color-picker-rgb">
-    <div>R <input type="number"></div>
-    <div>G <input type="number"></div>
-    <div>B <input type="number"></div>
+    <div>R <input data-model="R" min="0" max="255" type="number"></div>
+    <div>G <input data-model="G" min="0" max="255" type="number"></div>
+    <div>B <input data-model="B" min="0" max="255" type="number"></div>
   </div>
   <div class="tanbo-color-picker-hex">
-    <div>HEX <input type="text"></div>
+    <div>HEX <input data-model="HEX" type="text"></div>
   </div>
-</div>
+</form>
 <div class="tanbo-color-picker-swatches">
 </div>
 `;

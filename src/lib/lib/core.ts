@@ -55,11 +55,13 @@ export class Core {
   private hueBar: HTMLElement;
   private huePoint: HTMLElement;
 
+  private inputsWrap: HTMLElement;
   private hslInputs: HTMLInputElement[];
   private rgbInputs: HTMLInputElement[];
   private hexInput: HTMLInputElement;
 
   private touching = false;
+  private writing = false;
   private paletteX: number;
   private hueY: number;
 
@@ -83,6 +85,7 @@ export class Core {
     this.hueBar = this.host.querySelector('.tanbo-color-picker-hue-bar');
     this.huePoint = this.host.querySelector('.tanbo-color-picker-hue-pointer');
 
+    this.inputsWrap = this.host.querySelector('.tanbo-color-picker-inputs');
     this.hslInputs = Array.from(this.host.querySelectorAll('.tanbo-color-picker-hsl input'));
     this.rgbInputs = Array.from(this.host.querySelectorAll('.tanbo-color-picker-rgb input'));
     this.hexInput = this.host.querySelector('.tanbo-color-picker-hex input');
@@ -93,15 +96,18 @@ export class Core {
   }
 
   private render(color: string) {
-    this.hslInputs[0].value = this.hsl.h + '';
-    this.hslInputs[1].value = this.hsl.s + '';
-    this.hslInputs[2].value = this.hsl.l + '';
+    if (!this.writing) {
+      this.hslInputs[0].value = this.hsl.h + '';
+      this.hslInputs[1].value = this.hsl.s + '';
+      this.hslInputs[2].value = this.hsl.l + '';
 
-    this.rgbInputs[0].value = this.rgb.r + '';
-    this.rgbInputs[1].value = this.rgb.g + '';
-    this.rgbInputs[2].value = this.rgb.b + '';
+      this.rgbInputs[0].value = this.rgb.r + '';
+      this.rgbInputs[1].value = this.rgb.g + '';
+      this.rgbInputs[2].value = this.rgb.b + '';
 
-    this.hexInput.value = color;
+      this.hexInput.value = color;
+    }
+
     this.valueViewer.style.background = color;
     this.palette.style.background = `linear-gradient(to right, #fff, hsl(${this.hsv.h}, 100%, 50%))`;
     this.palettePoint.style.left = `calc(${this.touching ? this.paletteX : this.hsv.s}% - 6px)`;
@@ -112,6 +118,7 @@ export class Core {
   private bindingEvents() {
     this.bindPaletteEvent();
     this.bindHueBarEvent();
+    this.bindInputsEvent();
   }
 
   private bindPaletteEvent() {
@@ -197,6 +204,56 @@ export class Core {
     this.hueBar.addEventListener('mousedown', mouseDownFn);
   }
 
+  private bindInputsEvent() {
+    const updateByHSL = (h: number, s: number, l: number) => {
+      this.hex = hsl2Hex({h, s, l});
+    };
+    const updateByRGB = (r: number, g: number, b: number) => {
+      this.hex = rgb2Hex({r, g, b})
+    };
+    this.inputsWrap.addEventListener('input', (ev: any) => {
+      this.writing = true;
+      const el = ev.target;
+      const model = el.dataset.model;
+      if (el.type === 'number') {
+        const min = +el.min;
+        const max = +el.max;
+
+        el.value = Math.max(el.value, min);
+        el.value = Math.min(el.value, max);
+      }
+
+      const {h, s, l} = this.hsl;
+      const {r, g, b} = this.rgb;
+      switch (model) {
+        case 'H':
+          updateByHSL(el.value, s, l);
+          break;
+        case 'S':
+          updateByHSL(h, el.value, l);
+          break;
+        case 'L':
+          updateByHSL(h, s, el.value);
+          break;
+        case 'R':
+          updateByRGB(el.value, g, b);
+          break;
+        case 'G':
+          updateByRGB(r, el.value, b);
+          break;
+        case 'B':
+          updateByRGB(r, g, el.value);
+          break;
+        case 'HEX':
+          if (/^#(([0-9a-f]){3}){1,2}$/i.test(el.value)) {
+            this.hex = el.value;
+          }
+          break;
+      }
+      this.writing = false;
+    });
+  }
+
   private initColorOptions(colors: string[]) {
     const colorGroup = this.host.querySelector('.tanbo-color-picker-swatches');
     const nodes = colors.map(color => {
@@ -211,7 +268,7 @@ export class Core {
     colorGroup.addEventListener('click', (ev: Event) => {
       for (const item of nodes) {
         if (item.el === ev.target) {
-          this.hex = item.color;
+          this.hex = item.color.toLowerCase();
         }
       }
     });
