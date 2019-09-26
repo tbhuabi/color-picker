@@ -12,6 +12,7 @@ export interface Options {
 }
 
 export class Core {
+  onChange: (event: this) => void;
   readonly host = document.createElement('div');
 
   set hex(color: string) {
@@ -142,6 +143,7 @@ export class Core {
         s,
         v
       });
+      this.change();
     };
 
     const mouseDownFn = (ev: MouseEvent) => {
@@ -181,6 +183,7 @@ export class Core {
         s: this.hsv.s,
         v: this.hsv.v
       });
+      this.change();
     };
 
     const mouseDownFn = (ev: MouseEvent) => {
@@ -207,9 +210,12 @@ export class Core {
   private bindInputsEvent() {
     const updateByHSL = (h: number, s: number, l: number) => {
       this.hex = hsl2Hex({h, s, l});
+      this.change();
     };
     const updateByRGB = (r: number, g: number, b: number) => {
-      this.hex = rgb2Hex({r, g, b})
+      this.hex = rgb2Hex({r, g, b});
+      this.change();
+
     };
     this.inputsWrap.addEventListener('input', (ev: any) => {
       this.writing = true;
@@ -247,6 +253,7 @@ export class Core {
         case 'HEX':
           if (/^#(([0-9a-f]){3}){1,2}$/i.test(el.value)) {
             this.hex = el.value;
+            this.change();
           }
           break;
       }
@@ -269,8 +276,15 @@ export class Core {
       for (const item of nodes) {
         if (item.el === ev.target) {
           this.hex = item.color.toLowerCase();
+          this.change();
         }
       }
     });
+  }
+
+  private change() {
+    if (typeof this.onChange === 'function') {
+      this.onChange(this);
+    }
   }
 }
