@@ -1,10 +1,10 @@
 {
   "name": "@tanbo/color-picker",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
-  "main": "./bundles/color-picker.js",
-  "module": "./bundles/color-picker.js",
-  "typings": "./bundles/color-picker.d.ts",
+  "main": "./bundles/index.js",
+  "module": "./bundles/index.js",
+  "typings": "./bundles/index.d.ts",
   "scripts": {
     "start": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1",

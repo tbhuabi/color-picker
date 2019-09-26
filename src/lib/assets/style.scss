@@ -2,9 +2,8 @@
   display: inline-block;
   background-color: #fff;
   width: 165px;
-  border: 1px solid #ccc;
   font-size: 12px;
-  box-sizing: content-box;
+  box-sizing: content-box !important;
   padding: 6px;
   user-select: none;
 }
