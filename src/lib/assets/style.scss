@@ -19,6 +19,7 @@
   float: left;
   position: relative;
   cursor: pointer;
+
   &:before {
     content: "";
     position: absolute;
@@ -69,6 +70,7 @@
   bottom: 0;
   height: 0;
   pointer-events: none;
+
   &:before, &:after {
     contain: size style layout;
     content: "";
@@ -94,6 +96,7 @@
 .tanbo-color-picker-inputs {
   line-height: 22px;
   color: $color-gray-dark;
+
   > div {
     display: flex;
     padding: 4px 0;
@@ -113,7 +116,8 @@
         padding: 3px 5px;
         text-align: center;
         -moz-appearance: textfield;
-        font-family: Microsoft YaHei Mono,Menlo,Monaco,Consolas,Courier New,monospace;
+        font-family: Microsoft YaHei Mono, Menlo, Monaco, Consolas, Courier New, monospace;
+
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
           -webkit-appearance: none;
@@ -140,5 +144,40 @@
     &:hover {
       transform: scale(1.2);
     }
+  }
+}
+
+.tanbo-color-picker-btn-wrap {
+  padding-top: 5px;
+}
+
+.tanbo-color-picker-btn {
+  padding: 3px 6px;
+  font-size: 13px;
+  border-radius: 3px;
+  color: #fff;
+  background-color: $color-primary;
+  border: 1px solid $color-primary;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  line-height: 1.428;
+  outline: none;
+
+  &:hover {
+    background-color: darken($color-primary, 7);
+    border-color: darken($color-primary, 7);
+  }
+
+  &:focus {
+    background-color: darken($color-primary, 10);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(red($color-primary), green($color-primary), blue($color-primary), .5);
+    border-color: darken($color-primary, 7);
+  }
+
+  &:active {
+    background-color: darken($color-primary, 15);
+    border-color: darken($color-primary, 7);
   }
 }

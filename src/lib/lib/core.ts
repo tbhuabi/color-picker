@@ -13,6 +13,7 @@ export interface Options {
 
 export class Core {
   onChange: (event: this) => void;
+  onSelected: (event: this) => void;
   readonly host = document.createElement('div');
 
   set hex(color: string) {
@@ -55,6 +56,7 @@ export class Core {
   private palettePoint: HTMLElement;
   private hueBar: HTMLElement;
   private huePoint: HTMLElement;
+  private checkBtn: HTMLElement;
 
   private inputsWrap: HTMLElement;
   private hslInputs: HTMLInputElement[];
@@ -85,6 +87,7 @@ export class Core {
     this.palettePoint = this.host.querySelector('.tanbo-color-picker-palette-point');
     this.hueBar = this.host.querySelector('.tanbo-color-picker-hue-bar');
     this.huePoint = this.host.querySelector('.tanbo-color-picker-hue-pointer');
+    this.checkBtn = this.host.querySelector('.tanbo-color-picker-btn');
 
     this.inputsWrap = this.host.querySelector('.tanbo-color-picker-inputs');
     this.hslInputs = Array.from(this.host.querySelectorAll('.tanbo-color-picker-hsl input'));
@@ -120,6 +123,7 @@ export class Core {
     this.bindPaletteEvent();
     this.bindHueBarEvent();
     this.bindInputsEvent();
+    this.bindSelectedEvent();
   }
 
   private bindPaletteEvent() {
@@ -258,6 +262,12 @@ export class Core {
           break;
       }
       this.writing = false;
+    });
+  }
+
+  private bindSelectedEvent() {
+    this.checkBtn.addEventListener('click', () => {
+      this.onSelected(this);
     });
   }
 

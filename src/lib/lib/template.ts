@@ -27,4 +27,7 @@ export const template = `
 </form>
 <div class="tanbo-color-picker-swatches">
 </div>
+<div class="tanbo-color-picker-btn-wrap">
+  <button type="button" class="tanbo-color-picker-btn">确定</button>
+</div>
 `;
