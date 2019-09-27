@@ -267,7 +267,9 @@ export class Core {
 
   private bindSelectedEvent() {
     this.checkBtn.addEventListener('click', () => {
-      this.onSelected(this);
+      if (typeof this.onSelected === 'function') {
+        this.onSelected(this);
+      }
     });
   }
 
