@@ -188,7 +188,7 @@ export class Core {
 
     const mouseDownFn = (ev: MouseEvent) => {
       this.touching = true;
-      this.paletteX = this.hsv.s;
+      this.paletteX = this.paletteX || this.hsv.s;
       update(ev);
       document.addEventListener('mousemove', mouseMoveFn);
       document.addEventListener('mouseup', mouseUpFn);
