@@ -113,10 +113,11 @@ export class Core {
     }
 
     this.valueViewer.style.background = color;
-    this.palette.style.background = `linear-gradient(to right, #fff, hsl(${this.hsv.h}, 100%, 50%))`;
+    const hue = this.touching ? this.hueY : this.hsv.h / 360 * 100;
+    this.palette.style.background = `linear-gradient(to right, #fff, hsl(${hue}, 100%, 50%))`;
     this.palettePoint.style.left = `calc(${this.touching ? this.paletteX : this.hsv.s}% - 6px)`;
     this.palettePoint.style.top = `calc(${100 - this.hsv.v}% - 6px)`;
-    this.huePoint.style.top = `calc(${this.touching ? this.hueY : this.hsv.h / 360 * 100}% - 4px)`;
+    this.huePoint.style.top = `calc(${hue}% - 4px)`;
   }
 
   private bindingEvents() {
