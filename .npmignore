@@ -4,6 +4,7 @@ src/
 tsconfig.json
 tsconfig-build.json
 webpack.config.js
+webpack-sass.config.js
 gulpfile.js
 .gitignore
 .npmignore

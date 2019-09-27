@@ -8,8 +8,8 @@
   "scripts": {
     "start": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:lib": "tsc -p tsconfig-build.json",
-    "publish:lib": "rimraf bundles && npm run build:lib && gulp && npm publish --access=public"
+    "build:lib": "gulp && webpack --config webpack-sass.config.js && tsc -p tsconfig-build.json",
+    "publish:lib": "rimraf bundles && npm run build:lib && npm publish --access=public"
   },
   "author": "tanbo",
   "license": "ISC",
@@ -23,9 +23,11 @@
     "gulp-concat": "^2.6.1",
     "gulp-cssmin": "^0.2.0",
     "gulp-sass": "^4.0.2",
+    "gulp-sass-glob": "^1.1.0",
     "gulp-sourcemaps": "^2.6.5",
     "highlight.js": "^9.15.9",
     "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.12.0",
     "open": "^6.4.0",
     "postcss": "^7.0.17",
