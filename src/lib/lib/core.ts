@@ -1,6 +1,6 @@
 import {
   ColorHSL, ColorHSV, ColorRGB, hex2Hsl, hex2Hsv, hex2Rgb,
-  hsl2Hex, hsv2Hex, normalizeHex, rgb2Hex
+  hsl2Hex, hsl2Hsv, hsv2Hex, normalizeHex, rgb2Hex, rgb2Hsv
 } from '@tanbo/color';
 
 import { template } from './template';
@@ -17,12 +17,7 @@ export class Core {
   readonly host = document.createElement('div');
 
   set hex(color: string) {
-    this._hex = normalizeHex(color);
-    this._hsl = hex2Hsl(this._hex);
-    this._rgb = hex2Rgb(this._hex);
-
-    this.hsv = hex2Hsv(this._hex);
-    this.render(this._hex);
+    this.hsv = hex2Hsv(normalizeHex(color));
   }
 
   get hex() {
@@ -30,7 +25,7 @@ export class Core {
   }
 
   set hsl(color: ColorHSL) {
-    this.hex = hsl2Hex(color);
+    this.hsv = hsl2Hsv(color);
   }
 
   get hsl(): ColorHSL {
@@ -38,18 +33,31 @@ export class Core {
   }
 
   set rgb(color: ColorRGB) {
-    this.hex = rgb2Hex(color);
+    this.hsv = rgb2Hsv(color);
   }
 
   get rgb(): ColorRGB {
     return this._rgb;
   }
 
+  set hsv(color: ColorHSV) {
+    this._hsv = color;
+    this._hex = hsv2Hex(color);
+    this._hsl = hex2Hsl(this._hex);
+    this._rgb = hex2Rgb(this._hex);
+
+    this.render(color);
+  }
+
+  get hsv() {
+    return this._hsv;
+  }
+
   private _hex: string;
   private _hsl: ColorHSL;
   private _rgb: ColorRGB;
 
-  private hsv: ColorHSV;
+  private _hsv: ColorHSV;
   private container: HTMLElement;
   private valueViewer: HTMLElement;
   private palette: HTMLElement;
@@ -63,10 +71,7 @@ export class Core {
   private rgbInputs: HTMLInputElement[];
   private hexInput: HTMLInputElement;
 
-  private touching = false;
   private writing = false;
-  private paletteX: number;
-  private hueY: number;
 
   constructor(selector: string | HTMLElement, options: Options = {}) {
     if (typeof selector === 'string') {
@@ -99,7 +104,7 @@ export class Core {
     this.bindingEvents();
   }
 
-  private render(color: string) {
+  private render(color: ColorHSV) {
     if (!this.writing) {
       this.hslInputs[0].value = this.hsl.h + '';
       this.hslInputs[1].value = this.hsl.s + '';
@@ -109,15 +114,15 @@ export class Core {
       this.rgbInputs[1].value = this.rgb.g + '';
       this.rgbInputs[2].value = this.rgb.b + '';
 
-      this.hexInput.value = color;
+      this.hexInput.value = this.hex;
     }
 
-    this.valueViewer.style.background = color;
-    const hue = this.touching ? this.hueY : this.hsv.h / 360 * 100;
-    this.palette.style.background = `linear-gradient(to right, #fff, hsl(${hue}, 100%, 50%))`;
-    this.palettePoint.style.left = `calc(${this.touching ? this.paletteX : this.hsv.s}% - 6px)`;
-    this.palettePoint.style.top = `calc(${100 - this.hsv.v}% - 6px)`;
-    this.huePoint.style.top = `calc(${hue}% - 4px)`;
+    this.valueViewer.style.background = this.hex;
+
+    this.palette.style.background = `linear-gradient(to right, #fff, hsl(${color.h}, 100%, 50%))`;
+    this.palettePoint.style.left = `calc(${color.s}% - 6px)`;
+    this.palettePoint.style.top = `calc(${100 - color.v}% - 6px)`;
+    this.huePoint.style.top = `calc(${color.h / 360 * 100}% - 4px)`;
   }
 
   private bindingEvents() {
@@ -142,18 +147,15 @@ export class Core {
       v = Math.max(0, v);
       v = Math.min(100, v);
 
-      this.paletteX = s;
-      this.hex = hsv2Hex({
+      this.hsv = {
         h: this.hsv.h,
         s,
         v
-      });
+      };
       this.change();
     };
 
     const mouseDownFn = (ev: MouseEvent) => {
-      this.touching = true;
-
       update(ev);
       document.addEventListener('mousemove', mouseMoveFn);
       document.addEventListener('mouseup', mouseUpFn);
@@ -164,7 +166,6 @@ export class Core {
     };
 
     const mouseUpFn = () => {
-      this.touching = false;
       document.removeEventListener('mousemove', mouseMoveFn);
       document.removeEventListener('mouseup', mouseUpFn);
     };
@@ -182,18 +183,15 @@ export class Core {
 
       const h = 360 / 100 * offsetY;
 
-      this.hueY = offsetY;
-      this.hex = hsv2Hex({
+      this.hsv = {
         h,
         s: this.hsv.s,
         v: this.hsv.v
-      });
+      };
       this.change();
     };
 
     const mouseDownFn = (ev: MouseEvent) => {
-      this.touching = true;
-      this.paletteX = this.paletteX || this.hsv.s;
       update(ev);
       document.addEventListener('mousemove', mouseMoveFn);
       document.addEventListener('mouseup', mouseUpFn);
@@ -204,7 +202,6 @@ export class Core {
     };
 
     const mouseUpFn = () => {
-      this.touching = false;
       document.removeEventListener('mousemove', mouseMoveFn);
       document.removeEventListener('mouseup', mouseUpFn);
     };
