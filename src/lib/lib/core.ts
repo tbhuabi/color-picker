@@ -4,7 +4,6 @@ import {
 } from '@tanbo/color';
 
 import { template } from './template';
-import { getPosition } from './utiils';
 
 export interface Options {
   colors?: string[];
@@ -134,7 +133,7 @@ export class Core {
 
   private bindPaletteEvent() {
     const update = (ev: MouseEvent) => {
-      const position = getPosition(this.palette);
+      const position = this.palette.getBoundingClientRect();
       const offsetX = ev.clientX - position.left;
       const offsetY = ev.clientY - position.top;
 
@@ -175,7 +174,7 @@ export class Core {
 
   private bindHueBarEvent() {
     const update = (ev: MouseEvent) => {
-      const position = getPosition(this.hueBar);
+      const position = this.hueBar.getBoundingClientRect();
       let offsetY = ev.clientY - position.top;
 
       offsetY = Math.max(0, offsetY);
