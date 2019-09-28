@@ -10,7 +10,7 @@ export const template = `
     </div>
   </div>
 </div>
-<form class="tanbo-color-picker-inputs">
+<div class="tanbo-color-picker-inputs">
   <div class="tanbo-color-picker-hsl">
     <div>H <input data-model="H" min="0" max="360" type="number"></div>
     <div>S <input data-model="S" min="0" max="100" type="number"></div>
@@ -24,7 +24,7 @@ export const template = `
   <div class="tanbo-color-picker-hex">
     <div>HEX <input data-model="HEX" type="text"></div>
   </div>
-</form>
+</div>
 <div class="tanbo-color-picker-swatches">
 </div>
 <div class="tanbo-color-picker-btn-wrap">
