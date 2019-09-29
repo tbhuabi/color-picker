@@ -10,7 +10,7 @@ export interface Options {
   value?: string;
 }
 
-export class Core {
+export class Picker {
   onChange: (event: this) => void;
   onSelected: (event: this) => void;
   readonly host = document.createElement('div');

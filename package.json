@@ -1,6 +1,6 @@
 {
   "name": "@tanbo/color-picker",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "",
   "main": "./bundles/index.js",
   "module": "./bundles/index.js",

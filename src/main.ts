@@ -1,4 +1,4 @@
-import { createPicker } from './lib/color-picker';
+import { createPicker } from './lib/create';
 
 import './lib/assets/index.scss';
 

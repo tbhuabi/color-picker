@@ -1,3 +1,2 @@
-export * from './lib/core';
+export * from './lib/picker';
 export * from './lib/template';
-export * from './color-picker';
