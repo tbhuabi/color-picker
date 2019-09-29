@@ -117,7 +117,11 @@
         text-align: center;
         -moz-appearance: textfield;
         font-family: Microsoft YaHei Mono, Menlo, Monaco, Consolas, Courier New, monospace;
-
+        &:focus {
+          border-color: $color-primary;
+          box-shadow: 0 0 0 2px rgba(red($color-primary), green($color-primary), blue($color-primary), .5);
+          z-index: 1;
+        }
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
           -webkit-appearance: none;
