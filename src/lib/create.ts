@@ -2,6 +2,7 @@ import { Picker } from './lib/picker';
 
 export function createPicker(selector: string | HTMLElement) {
   return new Picker(selector, {
-    colors: ['#1296db', '#6ad1ec', '#15bd9a', '#ff9900', '#E74F5E', '#1c2838', '#495060', '#80848f', '#bbbec4', '#dddee1', '#e9eaec', '#f8f8f9']
+    colors: ['#f8f8f9', '#e9eaec', '#dddee1', '#bbbec4', '#80848f', '#495060', '#1c2838', '#e74f5e', '#ff9900', '#15bd9a', '#6ad1ec', '#1296db']
+    // colors: ['#e74f5e']
   });
 }

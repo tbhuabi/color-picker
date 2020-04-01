@@ -1,6 +1,6 @@
 import {
   ColorHSL, ColorHSV, ColorRGB, hex2Hsl, hex2Hsv, hex2Rgb,
-  hsl2Hex, hsl2Hsv, hsv2Hex, normalizeHex, rgb2Hex, rgb2Hsv
+  hsl2Hex, hsl2Hsv, hsl2Rgb, hsv2Hex, hsv2Hsl, hsv2Rgb, normalizeHex, rgb2Hex, rgb2Hsl, rgb2Hsv
 } from '@tanbo/color';
 
 import { template } from './template';
@@ -16,47 +16,83 @@ export class Picker {
   readonly host = document.createElement('div');
 
   set hex(color: string) {
-    this.hsv = hex2Hsv(normalizeHex(color));
+    const c = color ? normalizeHex(color) : null;
+    if (c) {
+      this.empty = false;
+      this._hex = c;
+      this._hsl = hex2Hsl(c);
+      this._rgb = hex2Rgb(c);
+      this._hsv = hex2Hsv(c);
+    } else {
+      this.empty = true;
+    }
+    this.render();
   }
 
   get hex() {
-    return this._hex;
+    return this.empty ? null : this._hex;
   }
 
   set hsl(color: ColorHSL) {
-    this.hsv = hsl2Hsv(color);
+    if (!color || typeof color.h !== 'number' || typeof color.s !== 'number' || typeof color.l !== 'number') {
+      this.empty = true;
+    } else {
+      this.empty = false;
+      this._hsl = color;
+      this._hex = hsl2Hex(color);
+      this._hsv = hsl2Hsv(color);
+      this._rgb = hsl2Rgb(color);
+    }
+    this.render();
   }
 
   get hsl(): ColorHSL {
-    return this._hsl;
+    return this.empty ? null : this._hsl;
+
   }
 
   set rgb(color: ColorRGB) {
-    this.hsv = rgb2Hsv(color);
+    if (!color || typeof color.r !== 'number' || typeof color.g !== 'number' || typeof color.b !== 'number') {
+      this.empty = true;
+    } else {
+      this.empty = false;
+      this._rgb = color;
+      this._hsl = rgb2Hsl(color);
+      this._hex = rgb2Hex(color);
+      this._hsv = rgb2Hsv(color);
+    }
+
+    this.render();
   }
 
   get rgb(): ColorRGB {
-    return this._rgb;
+    return this.empty ? null : this._rgb;
   }
 
   set hsv(color: ColorHSV) {
-    this._hsv = color;
-    this._hex = hsv2Hex(color);
-    this._hsl = hex2Hsl(this._hex);
-    this._rgb = hex2Rgb(this._hex);
-
-    this.render(color);
+    if (!color || typeof color.h !== 'number' || typeof color.s !== 'number' || typeof color.v !== 'number') {
+      this.empty = true;
+    } else {
+      this.empty = false;
+      this._hsv = color;
+      this._hex = hsv2Hex(color);
+      this._hsl = hsv2Hsl(color);
+      this._rgb = hsv2Rgb(color);
+    }
+    this.render();
   }
 
   get hsv() {
-    return this._hsv;
+    return this.empty ? null : this._hsv;
   }
 
   private _hex: string;
   private _hsl: ColorHSL;
   private _rgb: ColorRGB;
-
   private _hsv: ColorHSV;
+
+  private empty = false;
+
   private container: HTMLElement;
   private valueViewer: HTMLElement;
   private palette: HTMLElement;
@@ -72,6 +108,9 @@ export class Picker {
 
   private writing = false;
 
+  private recentColorOptions: string[] = [];
+  private colorOptionGroup: HTMLElement;
+
   constructor(selector: string | HTMLElement, options: Options = {}) {
     if (typeof selector === 'string') {
       this.container = document.querySelector(selector);
@@ -80,10 +119,6 @@ export class Picker {
     }
     this.host.classList.add('tanbo-color-picker');
     this.host.innerHTML = template;
-
-    if (Array.isArray(options.colors)) {
-      this.initColorOptions(options.colors);
-    }
 
     this.container.appendChild(this.host);
     this.valueViewer = this.host.querySelector('.tanbo-color-picker-value');
@@ -98,30 +133,75 @@ export class Picker {
     this.rgbInputs = Array.from(this.host.querySelectorAll('.tanbo-color-picker-rgb input'));
     this.hexInput = this.host.querySelector('.tanbo-color-picker-hex input');
 
+    this.colorOptionGroup = this.host.querySelector('.tanbo-color-picker-swatches');
+
+    if (Array.isArray(options.colors)) {
+      options.colors.forEach(item => this.addRecentColor(item.toLowerCase()));
+    }
     this.hex = options.value || '#f00';
 
     this.bindingEvents();
   }
 
-  private render(color: ColorHSV) {
-    if (!this.writing) {
-      this.hslInputs[0].value = this.hsl.h + '';
-      this.hslInputs[1].value = this.hsl.s + '';
-      this.hslInputs[2].value = this.hsl.l + '';
-
-      this.rgbInputs[0].value = this.rgb.r + '';
-      this.rgbInputs[1].value = this.rgb.g + '';
-      this.rgbInputs[2].value = this.rgb.b + '';
-
-      this.hexInput.value = this.hex;
+  addRecentColor(color: string) {
+    this.recentColorOptions = this.recentColorOptions.filter(item => {
+      return item !== color;
+    });
+    this.recentColorOptions.unshift(color);
+    if (this.recentColorOptions.length >= 12) {
+      this.recentColorOptions.length = 12;
+      this.recentColorOptions[11] = '';
+    } else {
+      this.recentColorOptions.push('');
     }
 
-    this.valueViewer.style.background = this.hex;
+    this.recentColorOptions.forEach((color, index) => {
+      const el = this.colorOptionGroup.children[index] as HTMLElement;
+      el.style.background = color;
+      el.dataset.color = color;
+    });
+  }
 
-    this.palette.style.background = `linear-gradient(to right, #fff, hsl(${color.h}, 100%, 50%))`;
-    this.palettePoint.style.left = `calc(${color.s}% - 6px)`;
-    this.palettePoint.style.top = `calc(${100 - color.v}% - 6px)`;
-    this.huePoint.style.top = `calc(${color.h / 360 * 100}% - 4px)`;
+  private render() {
+
+    if (!this.writing) {
+      if (this.empty) {
+        this.hslInputs[0].value = '';
+        this.hslInputs[1].value = '';
+        this.hslInputs[2].value = '';
+
+        this.rgbInputs[0].value = '';
+        this.rgbInputs[1].value = '';
+        this.rgbInputs[2].value = '';
+
+        this.hexInput.value = '';
+      } else {
+        this.hslInputs[0].value = this.hsl.h + '';
+        this.hslInputs[1].value = this.hsl.s + '';
+        this.hslInputs[2].value = this.hsl.l + '';
+
+        this.rgbInputs[0].value = this.rgb.r + '';
+        this.rgbInputs[1].value = this.rgb.g + '';
+        this.rgbInputs[2].value = this.rgb.b + '';
+
+        this.hexInput.value = this.hex;
+      }
+    }
+
+    this.palette.classList.remove('tanbo-color-picker-palette-empty');
+    this.palette.style.background = `linear-gradient(to right, #fff, hsl(${this._hsv.h}, 100%, 50%))`;
+    this.palettePoint.style.left = `calc(${this._hsv.s}% - 6px)`;
+    this.palettePoint.style.top = `calc(${100 - this._hsv.v}% - 6px)`;
+    this.huePoint.style.top = `calc(${this._hsv.h / 360 * 100}% - 4px)`;
+    if (this.empty) {
+      this.palette.classList.add('tanbo-color-picker-palette-empty');
+      this.palette.style.background = '';
+      this.valueViewer.style.background = '';
+    } else {
+      this.valueViewer.style.background = this.hex;
+      this.palette.classList.remove('tanbo-color-picker-palette-empty');
+      this.palette.style.background = `linear-gradient(to right, #fff, hsl(${this._hsv.h}, 100%, 50%))`;
+    }
   }
 
   private bindingEvents() {
@@ -129,6 +209,7 @@ export class Picker {
     this.bindHueBarEvent();
     this.bindInputsEvent();
     this.bindSelectedEvent();
+    this.bindColorOptionsEvent();
   }
 
   private bindPaletteEvent() {
@@ -145,9 +226,8 @@ export class Picker {
 
       v = Math.max(0, v);
       v = Math.min(100, v);
-
       this.hsv = {
-        h: this.hsv.h,
+        h: this._hsv.h,
         s,
         v
       };
@@ -184,8 +264,8 @@ export class Picker {
 
       this.hsv = {
         h,
-        s: this.hsv.s,
-        v: this.hsv.v
+        s: this._hsv.s,
+        v: this._hsv.v
       };
       this.change();
     };
@@ -264,28 +344,23 @@ export class Picker {
 
   private bindSelectedEvent() {
     this.checkBtn.addEventListener('click', () => {
+      if (this.hex) {
+        this.addRecentColor(this.hex);
+      }
       if (typeof this.onSelected === 'function') {
         this.onSelected(this);
       }
     });
   }
 
-  private initColorOptions(colors: string[]) {
-    const colorGroup = this.host.querySelector('.tanbo-color-picker-swatches');
-    const nodes = colors.map(color => {
-      const el = document.createElement('div');
-      el.style.background = color;
-      colorGroup.appendChild(el);
-      return {
-        el,
-        color
-      }
-    });
-    colorGroup.addEventListener('click', (ev: Event) => {
-      for (const item of nodes) {
-        if (item.el === ev.target) {
-          this.hex = item.color.toLowerCase();
+  private bindColorOptionsEvent() {
+    this.colorOptionGroup.addEventListener('click', (ev: MouseEvent) => {
+      for (const item of this.recentColorOptions) {
+        const c = (ev.target as HTMLElement).dataset.color;
+        if (item === c) {
+          this.hex = c;
           this.change();
+          return;
         }
       }
     });

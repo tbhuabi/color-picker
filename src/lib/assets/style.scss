@@ -29,6 +29,18 @@
     bottom: 0;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
   }
+
+  &-empty {
+    background-color: #fff;
+    background-image: linear-gradient(45deg, $color-gray 25%, transparent 25%, transparent 75%, $color-gray 75%, $color-gray),
+    linear-gradient(45deg, $color-gray 26%, transparent 26%, transparent 74%, $color-gray 74%, $color-gray);
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
+
+    &:before {
+      display: none;
+    }
+  }
 }
 
 .tanbo-color-picker-palette-point {
@@ -50,8 +62,12 @@
 .tanbo-color-picker-value {
   width: 20px;
   height: 20px;
-  background-color: #ccc;
   margin-bottom: 10px;
+  background-color: #fff;
+  background-image: linear-gradient(45deg, $color-gray 25%, transparent 25%, transparent 75%, $color-gray 75%, $color-gray),
+  linear-gradient(45deg, $color-gray 26%, transparent 26%, transparent 74%, $color-gray 74%, $color-gray);
+  background-size: 10px 10px;
+  background-position: 0 0, 5px 5px;
 }
 
 .tanbo-color-picker-hue-bar {
@@ -117,11 +133,14 @@
         text-align: center;
         -moz-appearance: textfield;
         font-family: Microsoft YaHei Mono, Menlo, Monaco, Consolas, Courier New, monospace;
+        line-height: 1.2;
+
         &:focus {
           border-color: $color-primary;
           box-shadow: 0 0 0 2px rgba(red($color-primary), green($color-primary), blue($color-primary), .5);
           z-index: 1;
         }
+
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
           -webkit-appearance: none;
@@ -148,6 +167,14 @@
     &:hover {
       transform: scale(1.2);
     }
+  }
+
+  &-empty {
+    background-color: #fff;
+    background-image: linear-gradient(45deg, $color-gray 25%, transparent 25%, transparent 75%, $color-gray 75%, $color-gray),
+    linear-gradient(45deg, $color-gray 26%, transparent 26%, transparent 74%, $color-gray 74%, $color-gray);
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
   }
 }
 
