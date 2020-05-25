@@ -158,7 +158,7 @@ export class Picker {
     this.recentColorOptions.forEach((color, index) => {
       const el = this.colorOptionGroup.children[index] as HTMLElement;
       el.style.background = color;
-      el.dataset.color = color;
+      el.setAttribute('data-color', color);
     });
   }
 
@@ -301,7 +301,7 @@ export class Picker {
     this.inputsWrap.addEventListener('input', (ev: any) => {
       this.writing = true;
       const el = ev.target;
-      const model = el.dataset.model;
+      const model = el.getAttribute('data-model');
       if (el.type === 'number') {
         const min = +el.min;
         const max = +el.max;
@@ -356,7 +356,7 @@ export class Picker {
   private bindColorOptionsEvent() {
     this.colorOptionGroup.addEventListener('click', (ev: MouseEvent) => {
       for (const item of this.recentColorOptions) {
-        const c = (ev.target as HTMLElement).dataset.color;
+        const c = (ev.target as HTMLElement).getAttribute('data-color');
         if (item === c) {
           this.hex = c;
           this.change();
