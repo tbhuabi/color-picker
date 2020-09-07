@@ -1,6 +1,6 @@
 import {
   ColorHSL, ColorHSV, ColorRGB, ColorRGBA, hex2Hsl, hex2Hsv, hex2Rgb,
-  hsl2Hex, hsl2Hsv, hsl2Rgb, hsv2Hex, hsv2Hsl, hsv2Rgb, normalizeHex, rgb2Hex, rgb2Hsl, rgb2Hsv
+  hsl2Hex, hsl2Hsv, hsl2Rgb, hsv2Hex, hsv2Hsl, hsv2Rgb, normalizeHex, parseCss, rgb2Hex, rgb2Hsl, rgb2Hsv
 } from '@tanbo/color';
 
 import { template } from './template';
@@ -205,7 +205,7 @@ export class Picker {
     }
 
     this.recentColorOptions.forEach((color, index) => {
-      const el = this.colorOptionGroup.children[index] as HTMLElement;
+      const el = this.colorOptionGroup.children[index].children[0] as HTMLElement;
       el.style.background = color;
       el.setAttribute('data-color', color);
     });
@@ -434,7 +434,10 @@ export class Picker {
 
   private bindSelectedEvent() {
     this.checkBtn.addEventListener('click', () => {
-      if (this.hex) {
+      if (this.rgba?.a !== 1) {
+        const {r, g, b, a} = this.rgba;
+        this.addRecentColor(`rgba(${r},${g},${b},${a})`);
+      } else if (this.hex) {
         this.addRecentColor(this.hex);
       }
       if (typeof this.onSelected === 'function') {
@@ -448,7 +451,11 @@ export class Picker {
       for (const item of this.recentColorOptions) {
         const c = (ev.target as HTMLElement).getAttribute('data-color');
         if (item === c) {
-          this.hex = c;
+          if (/^#\w+/.test(c)) {
+            this.hex = c;
+          } else if (/^rgba/.test(c)) {
+            this.rgba = parseCss(c) as ColorRGBA;
+          }
           this.change();
           return;
         }

@@ -39,8 +39,18 @@ export const template = `
   </div>
 </div>
 <div class="tanbo-color-picker-swatches">
-  <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
-  <div class="tanbo-color-picker-swatches-empty"></div>
+  <div><div></div></div>
+  <div><div></div></div>
+  <div><div></div></div>
+  <div><div></div></div>
+  <div><div></div></div>
+  <div><div></div></div>
+  <div><div></div></div>
+  <div><div></div></div>
+  <div><div></div></div>
+  <div><div></div></div>
+  <div><div></div></div>
+  <div><div></div></div>
 </div>
 <div class="tanbo-color-picker-btn-wrap">
   <button type="button" class="tanbo-color-picker-btn">确定</button>

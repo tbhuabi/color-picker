@@ -116,6 +116,9 @@
 
 .tanbo-color-picker-viewer-alpha-value {
   text-align: center;
+  line-height: 1;
+  width: 34px;
+  margin-left: -7px;
 }
 
 .tanbo-color-picker-value {
@@ -217,9 +220,9 @@
 .tanbo-color-picker-swatches {
   font-size: 0;
   padding: 3px;
-  background: repeating-linear-gradient(-45deg, $color-light, $color-light 5px, #fff 0, #fff 10px);
+  //background: repeating-linear-gradient(-45deg, $color-light, $color-light 5px, #fff 0, #fff 10px);
 
-  div {
+  > div {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -227,18 +230,20 @@
     box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
     transition: transform .1s;
     cursor: pointer;
-
-    &:hover {
-      transform: scale(1.2);
-    }
-  }
-
-  &-empty {
     background-color: #fff;
     background-image: linear-gradient(45deg, $color-gray 25%, transparent 25%, transparent 75%, $color-gray 75%, $color-gray),
     linear-gradient(45deg, $color-gray 26%, transparent 26%, transparent 74%, $color-gray 74%, $color-gray);
     background-size: 10px 10px;
     background-position: 0 0, 5px 5px;
+
+    div {
+      width: 100%;
+      height: 100%;
+    }
+
+    &:hover {
+      transform: scale(1.2);
+    }
   }
 }
 
