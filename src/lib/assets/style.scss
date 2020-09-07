@@ -9,14 +9,16 @@
 }
 
 .tanbo-color-picker-viewer {
-  height: 130px;
-  margin-bottom: 5px;
+  height: 160px;
+}
+
+.tanbo-color-picker-viewer-left {
+  float: left;
 }
 
 .tanbo-color-picker-palette {
   height: 130px;
   width: 130px;
-  float: left;
   position: relative;
   cursor: pointer;
 
@@ -54,9 +56,66 @@
   pointer-events: none;
 }
 
-.tanbo-color-picker-tools {
+.tanbo-color-picker-viewer-alpha {
+  margin-top: 10px;
+  height: 10px;
+  position: relative;
+  background-color: $color-gray;
+  background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff),
+  linear-gradient(45deg, #fff 26%, transparent 26%, transparent 74%, #fff 74%, #fff);
+  background-size: 10px 10px;
+  background-position: -5px -5px, 0 0;
+
+  &-bar {
+    height: 100%;
+    border-radius: inherit;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+  }
+
+  &-pointer {
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 100%;
+    position: absolute;
+
+    &:before, &:after {
+      contain: size style layout;
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-width: 7px 4px;
+      border-style: solid;
+      left: -4px;
+    }
+
+    &:before {
+      border-color: $color-dark transparent transparent transparent;
+      top: -7px;
+    }
+
+    &:after {
+      border-color: transparent transparent $color-dark transparent;
+      top: 2px;
+    }
+  }
+}
+
+.tanbo-color-picker-viewer-right {
   float: left;
   margin-left: 10px;
+  width: 20px;
+}
+
+.tanbo-color-picker-tools {
+  margin-bottom: 10px;
+}
+
+.tanbo-color-picker-viewer-alpha-value {
+  text-align: center;
 }
 
 .tanbo-color-picker-value {
@@ -68,6 +127,11 @@
   linear-gradient(45deg, $color-gray 26%, transparent 26%, transparent 74%, $color-gray 74%, $color-gray);
   background-size: 10px 10px;
   background-position: 0 0, 5px 5px;
+
+  &-color {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .tanbo-color-picker-hue-bar {

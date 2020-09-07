@@ -1,12 +1,25 @@
 export const template = `
 <div class="tanbo-color-picker-viewer">
-  <div class="tanbo-color-picker-palette">
-    <div class="tanbo-color-picker-palette-point"></div>
+  <div class="tanbo-color-picker-viewer-left">
+    <div class="tanbo-color-picker-palette">
+      <div class="tanbo-color-picker-palette-point"></div>
+    </div>
+    <div class="tanbo-color-picker-viewer-alpha">
+      <div class="tanbo-color-picker-viewer-alpha-pointer"></div>
+      <div class="tanbo-color-picker-viewer-alpha-bar"></div>
+    </div>
   </div>
-  <div class="tanbo-color-picker-tools">
-    <div class="tanbo-color-picker-value"></div>
-    <div class="tanbo-color-picker-hue-bar">
-      <div class="tanbo-color-picker-hue-pointer"></div>
+  <div class="tanbo-color-picker-viewer-right">
+    <div class="tanbo-color-picker-tools">
+      <div class="tanbo-color-picker-value">
+        <div class="tanbo-color-picker-value-color"></div>
+      </div>
+      <div class="tanbo-color-picker-hue-bar">
+        <div class="tanbo-color-picker-hue-pointer"></div>
+      </div>
+    </div>
+    <div class="tanbo-color-picker-viewer-alpha-value">
+      1
     </div>
   </div>
 </div>
