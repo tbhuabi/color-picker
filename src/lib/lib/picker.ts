@@ -451,10 +451,10 @@ export class Picker {
       for (const item of this.recentColorOptions) {
         const c = (ev.target as HTMLElement).getAttribute('data-color');
         if (item === c) {
-          if (/^#\w+/.test(c)) {
-            this.hex = c;
-          } else if (/^rgba/.test(c)) {
+          if (/^rgba/.test(c)) {
             this.rgba = parseCss(c) as ColorRGBA;
+          } else {
+            this.hex = c;
           }
           this.change();
           return;
