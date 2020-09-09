@@ -94,7 +94,7 @@
 
     &:before {
       border-color: $color-dark transparent transparent transparent;
-      top: -7px;
+      top: -6px;
     }
 
     &:after {
@@ -239,6 +239,29 @@
     div {
       width: 100%;
       height: 100%;
+    }
+
+    &:last-child {
+      overflow: hidden;
+
+      div {
+        background: #fff;
+        border-top: 1px solid $color-lighter;
+        border-left: 1px solid $color-lighter;
+        box-sizing: border-box;
+        position: relative;
+
+        &:after {
+          content: "";
+          left: 0;
+          right: 0;
+          height: 1px;
+          background-color: $color-danger;
+          position: absolute;
+          top: 50%;
+          transform: rotateZ(-45deg) scaleX(1.5);
+        }
+      }
     }
 
     &:hover {
