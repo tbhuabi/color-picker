@@ -434,8 +434,9 @@ export class Picker {
 
   private bindSelectedEvent() {
     this.checkBtn.addEventListener('click', () => {
-      if (this.rgba?.a !== 1) {
-        const {r, g, b, a} = this.rgba;
+      const rgba = this.rgba;
+      if (rgba && rgba.a !== 1) {
+        const {r, g, b, a} = rgba;
         this.addRecentColor(`rgba(${r},${g},${b},${a})`);
       } else if (this.hex) {
         this.addRecentColor(this.hex);
