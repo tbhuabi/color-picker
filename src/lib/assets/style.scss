@@ -119,6 +119,8 @@
   line-height: 1;
   width: 34px;
   margin-left: -7px;
+  font-family: Microsoft YaHei Mono, Menlo, Monaco, Consolas, Courier New, monospace;
+  font-size: 13px;
 }
 
 .tanbo-color-picker-value {
@@ -201,6 +203,7 @@
         -moz-appearance: textfield;
         font-family: Microsoft YaHei Mono, Menlo, Monaco, Consolas, Courier New, monospace;
         line-height: 1.2;
+        font-size: 13px;
 
         &:focus {
           border-color: $color-primary;

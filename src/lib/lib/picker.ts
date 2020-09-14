@@ -101,7 +101,7 @@ export class Picker {
   }
 
   get rgba() {
-    return this._rgba;
+    return this.empty ? null : this._rgba;
   }
 
   set hsv(color: ColorHSV) {
