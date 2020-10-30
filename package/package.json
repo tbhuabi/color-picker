@@ -1,0 +1,20 @@
+{
+  "name": "@tanbo/color-picker",
+  "version": "0.1.0",
+  "description": "A color picker tool",
+  "main": "./bundles/public-api.js",
+  "module": "./bundles/public-api.js",
+  "typings": "./bundles/public-api.d.ts",
+  "license": "MIT",
+  "author": {
+    "name": "tanbo",
+    "email": "tanbohb@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbhuabi/color-picker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tbhuabi/color-picker.git/issues"
+  }
+}

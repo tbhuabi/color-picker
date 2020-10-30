@@ -1,14 +1,33 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "es2015",
+    "module": "es2020",
     "moduleResolution": "node",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": ["es2015", "dom"],
-    "noImplicitAny": true,
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "noImplicitAny": false,
     "suppressImplicitAnyIndexErrors": true,
-    "downlevelIteration": true
-  }
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "outDir": "bundles/",
+    "paths": {
+      "@tanbo/color-picker": [
+        "src/public-api.ts"
+      ],
+      "@tanbo/*": [
+        "src/*"
+      ]
+    }
+  },
+  "include": [
+    "index.ts",
+    "src/",
+    "test/"
+  ]
 }

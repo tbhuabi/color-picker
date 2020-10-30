@@ -5,10 +5,10 @@ module.exports = {
   mode: 'production',
   devtool: 'source-map',
   entry: {
-    index: path.resolve(__dirname, 'src/lib/assets/index.scss')
+    index: path.resolve(__dirname, 'src/assets/index.scss')
   },
   output: {
-    path: path.resolve(__dirname, 'bundles/')
+    path: path.resolve(__dirname, 'package/bundles/')
   },
   module: {
     rules: [{

@@ -4,15 +4,19 @@ const path = require('path');
 
 module.exports = {
   mode: 'development',
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'source-map',
   entry: {
-    index: path.resolve(__dirname, 'src/main.ts')
+    index: path.resolve(__dirname, 'index.ts')
   },
   output: {
     path: path.resolve(__dirname, 'dist')
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
+    alias: {
+      '@tanbo/color-picker': path.resolve('src/public-api.ts'),
+      '@tanbo/': path.resolve('src'),
+    }
   },
   devServer: {
     host: 'localhost',
@@ -59,7 +63,7 @@ module.exports = {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
-      template: 'src/index.html'
+      template: 'index.html'
     })
   ]
 };
