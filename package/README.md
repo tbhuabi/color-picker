@@ -15,14 +15,14 @@ import { createPicker } from '@tanbo/color-picker';
 const picker = createPicker(document.getElementById('picker'));
 
 // 当用户确认选中颜色后触发
-picker.onSelected.subscribe(() => {
+picker.onSelected = function () {
   console.log(picker.rgb)
-})
+}
 
 // 当用户选择颜色时触发
-picker.onChange.subscribe(() => {
+picker.onChange = function () {
   console.log(picker.rgb)
-})
+}
 
 // 添加最近使用的颜色
 picker.addRecentColor('#f00')
