@@ -5,7 +5,7 @@ import {
 
 import { template } from './template';
 
-export interface Options {
+export interface PickerOptions {
   colors?: string[];
   value?: string;
   btnText?: string;
@@ -158,7 +158,7 @@ export class Picker {
   private recentColorOptions: string[] = [];
   private colorOptionGroup: HTMLElement;
 
-  constructor(selector: string | HTMLElement, options: Options = {}) {
+  constructor(selector: string | HTMLElement, options: PickerOptions = {}) {
     if (typeof selector === 'string') {
       this.container = document.querySelector(selector);
     } else {
