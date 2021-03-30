@@ -1,4 +1,5 @@
-export const template = `
+export function template(btnText: string) {
+  return `
 <div class="tanbo-color-picker-viewer">
   <div class="tanbo-color-picker-viewer-left">
     <div class="tanbo-color-picker-palette">
@@ -53,6 +54,7 @@ export const template = `
   <div><div></div></div>
 </div>
 <div class="tanbo-color-picker-btn-wrap">
-  <button type="button" class="tanbo-color-picker-btn">确定</button>
+  <button type="button" class="tanbo-color-picker-btn">${btnText}</button>
 </div>
-`;
+`
+};

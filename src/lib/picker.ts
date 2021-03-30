@@ -8,6 +8,7 @@ import { template } from './template';
 export interface Options {
   colors?: string[];
   value?: string;
+  btnText?: string;
 }
 
 export class Picker {
@@ -164,7 +165,7 @@ export class Picker {
       this.container = selector;
     }
     this.host.classList.add('tanbo-color-picker');
-    this.host.innerHTML = template;
+    this.host.innerHTML = template(options.btnText || '确定');
 
     this.container.appendChild(this.host);
     this.valueViewer = this.host.querySelector('.tanbo-color-picker-value-color');
