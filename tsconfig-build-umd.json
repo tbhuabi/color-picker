@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "target": "es6",
+    "target": "es5",
     "module": "es2020",
     "moduleResolution": "node",
     "sourceMap": true,
@@ -16,7 +16,7 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "baseUrl": "./",
-    "outDir": "package/bundles/esm",
+    "outDir": "package/bundles/umd",
     "paths": {
       "@tanbo/color-picker": [
         "src/public-api.ts"

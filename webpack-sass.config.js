@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const DisableOutputWebpackPlugin = require('./disable-output-webpack-plugin')
 
 module.exports = {
   mode: 'production',
@@ -29,6 +30,7 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'color-picker.min.css'
-    })
+    }),
+    new DisableOutputWebpackPlugin(/index/)
   ]
 };
