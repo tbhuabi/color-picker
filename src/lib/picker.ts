@@ -1,19 +1,23 @@
 import {
-  ColorHSL, ColorHSV, ColorRGB, ColorRGBA, hex2Hsl, hex2Hsv, hex2Rgb,
+  any2Hsl,
+  ColorHSL, ColorHSV, ColorRGB, ColorRGBA, getColorEncoding, hex2Hsl, hex2Hsv, hex2Rgb,
   hsl2Hex, hsl2Hsv, hsl2Rgb, hsv2Hex, hsv2Hsl, hsv2Rgb, normalizeHex, parseCss, rgb2Hex, rgb2Hsl, rgb2Hsv
 } from '@tanbo/color';
+import { Subject } from '@tanbo/stream';
 
 import { template } from './template';
 
 export interface PickerOptions {
+  mainColors?: string[];
   colors?: string[];
   value?: string;
   btnText?: string;
+  paletteText?: string;
 }
 
 export class Picker {
-  onChange: (event: this) => void;
-  onSelected: (event: this) => void;
+  onChange = new Subject<Picker>()
+  onSelected = new Subject<Picker>()
   readonly host = document.createElement('div');
 
   set hex(color: string) {
@@ -152,11 +156,17 @@ export class Picker {
   private hslInputs: HTMLInputElement[];
   private rgbInputs: HTMLInputElement[];
   private hexInput: HTMLInputElement;
+  private colorWrapper: HTMLElement;
+  private switchBtn: HTMLElement;
+  private menu: HTMLElement;
+  private backBtn: HTMLElement;
 
   private writing = false;
 
-  private recentColorOptions: string[] = [];
-  private colorOptionGroup: HTMLElement;
+  private colorElements: HTMLElement[] = []
+
+  private mainColors: HTMLElement
+  private colors: HTMLElement
 
   constructor(selector: string | HTMLElement, options: PickerOptions = {}) {
     if (typeof selector === 'string') {
@@ -165,7 +175,7 @@ export class Picker {
       this.container = selector;
     }
     this.host.classList.add('tanbo-color-picker');
-    this.host.innerHTML = template(options.btnText || '确定');
+    this.host.innerHTML = template(options.btnText || '确定', options.paletteText || '调色盘');
 
     this.container.appendChild(this.host);
     this.valueViewer = this.host.querySelector('.tanbo-color-picker-value-color');
@@ -182,33 +192,32 @@ export class Picker {
     this.hslInputs = Array.from(this.host.querySelectorAll('.tanbo-color-picker-hsl input'));
     this.rgbInputs = Array.from(this.host.querySelectorAll('.tanbo-color-picker-rgb input'));
     this.hexInput = this.host.querySelector('.tanbo-color-picker-hex input');
+    this.colorWrapper = this.host.querySelector('.tanbo-color-picker-preset');
+    this.switchBtn = this.host.querySelector('.tanbo-color-picker-to-palette');
+    this.menu = this.host.querySelector('.tanbo-color-picker-menu');
+    this.backBtn = this.host.querySelector('.tanbo-color-picker-back-btn');
 
-    this.colorOptionGroup = this.host.querySelector('.tanbo-color-picker-swatches');
+    this.mainColors = this.colorWrapper.children[0] as HTMLElement
+    this.colors = this.colorWrapper.children[1] as HTMLElement
 
+    if (Array.isArray(options.mainColors)) {
+      this.addColor(options.mainColors, this.mainColors)
+    }
     if (Array.isArray(options.colors)) {
-      options.colors.forEach(item => this.addRecentColor(item.toLowerCase()));
+      this.addColor(options.colors, this.colors)
     }
     this.hex = options.value || '#f00';
 
     this.bindingEvents();
   }
 
-  addRecentColor(color: string) {
-    this.recentColorOptions = this.recentColorOptions.filter(item => {
-      return item !== color;
-    });
-    this.recentColorOptions.unshift(color);
-    if (this.recentColorOptions.length >= 12) {
-      this.recentColorOptions.length = 12;
-      this.recentColorOptions[11] = '';
-    } else {
-      this.recentColorOptions.push('');
-    }
-
-    this.recentColorOptions.forEach((color, index) => {
-      const el = this.colorOptionGroup.children[index].children[0] as HTMLElement;
+  private addColor(colors: string[], host: HTMLElement) {
+    colors.forEach(color => {
+      const el = document.createElement('div')
       el.style.background = color;
       el.setAttribute('data-color', color);
+      this.colorElements.push(el)
+      host.append(el)
     });
   }
 
@@ -258,6 +267,19 @@ export class Picker {
       this.alphaBar.style.background = `linear-gradient(to right, transparent, ${this.hex})`;
       this.alphaPoint.style.left = (this.rgba.a || 0) * 100 + '%';
     }
+    this.colorElements.forEach(el => {
+      const v = el.getAttribute('data-color') || ''
+      const hsl = any2Hsl(v)
+      if (hsl === 'unknown') {
+        el.classList.remove('tanbo-color-picker-current')
+        return
+      }
+      if (hsl.l === this.hsl.l && hsl.s === this.hsl.s && hsl.h === this.hsl.h) {
+        el.classList.add('tanbo-color-picker-current')
+      } else {
+        el.classList.remove('tanbo-color-picker-current')
+      }
+    })
   }
 
   private bindingEvents() {
@@ -267,6 +289,16 @@ export class Picker {
     this.bindInputsEvent();
     this.bindSelectedEvent();
     this.bindColorOptionsEvent();
+    this.bindSwitchEvent()
+  }
+
+  private bindSwitchEvent() {
+    this.switchBtn.addEventListener('click', () => {
+      this.host.classList.add('tanbo-color-picker-show-palette')
+    })
+    this.backBtn.addEventListener('click', () => {
+      this.host.classList.remove('tanbo-color-picker-show-palette')
+    })
   }
 
   private bindAlphaEvent() {
@@ -280,7 +312,7 @@ export class Picker {
         ...this._rgba,
         a: offsetX / position.width
       };
-      this.change();
+      this.onChange.next(this);
     };
 
     const mouseDownFn = (ev: MouseEvent) => {
@@ -321,7 +353,7 @@ export class Picker {
         s,
         v
       };
-      this.change();
+      this.onChange.next(this);
     };
 
     const mouseDownFn = (ev: MouseEvent) => {
@@ -358,7 +390,7 @@ export class Picker {
         s: this._hsv.s,
         v: this._hsv.v
       };
-      this.change();
+      this.onChange.next(this);
     };
 
     const mouseDownFn = (ev: MouseEvent) => {
@@ -381,13 +413,12 @@ export class Picker {
 
   private bindInputsEvent() {
     const updateByHSL = (h: number, s: number, l: number) => {
-      this.hex = hsl2Hex({h, s, l});
-      this.change();
+      this.hex = hsl2Hex({ h, s, l });
+      this.onChange.next(this);
     };
     const updateByRGB = (r: number, g: number, b: number) => {
-      this.hex = rgb2Hex({r, g, b});
-      this.change();
-
+      this.hex = rgb2Hex({ r, g, b });
+      this.onChange.next(this);
     };
     this.inputsWrap.addEventListener('input', (ev: any) => {
       this.writing = true;
@@ -401,8 +432,8 @@ export class Picker {
         el.value = Math.min(el.value, max);
       }
 
-      const {h, s, l} = this.hsl;
-      const {r, g, b} = this.rgb;
+      const { h, s, l } = this.hsl;
+      const { r, g, b } = this.rgb;
       switch (model) {
         case 'H':
           updateByHSL(el.value, s, l);
@@ -425,7 +456,7 @@ export class Picker {
         case 'HEX':
           if (/^#(([0-9a-f]){3}){1,2}$/i.test(el.value)) {
             this.hex = el.value;
-            this.change();
+            this.onChange.next(this);
           }
           break;
       }
@@ -435,39 +466,24 @@ export class Picker {
 
   private bindSelectedEvent() {
     this.checkBtn.addEventListener('click', () => {
-      const rgba = this.rgba;
-      if (rgba && rgba.a !== 1) {
-        const {r, g, b, a} = rgba;
-        this.addRecentColor(`rgba(${r},${g},${b},${a})`);
-      } else if (this.hex) {
-        this.addRecentColor(this.hex);
-      }
-      if (typeof this.onSelected === 'function') {
-        this.onSelected(this);
-      }
+      this.host.classList.remove('tanbo-color-picker-show-palette')
+      this.onSelected.next(this);
     });
   }
 
   private bindColorOptionsEvent() {
-    this.colorOptionGroup.addEventListener('click', (ev: MouseEvent) => {
-      for (const item of this.recentColorOptions) {
-        const c = (ev.target as HTMLElement).getAttribute('data-color');
-        if (item === c) {
-          if (/^rgba/.test(c)) {
-            this.rgba = parseCss(c) as ColorRGBA;
-          } else {
-            this.hex = c;
-          }
-          this.change();
-          return;
-        }
+    this.colorWrapper.addEventListener('click', (ev: MouseEvent) => {
+      const target = ev.target as HTMLElement
+      if (!target.hasAttribute('data-color')) {
+        return
       }
+      const c = target.getAttribute('data-color');
+      if (/^rgba/.test(c)) {
+        this.rgba = parseCss(c) as ColorRGBA;
+      } else {
+        this.hex = c;
+      }
+      this.onChange.next(this);
     });
-  }
-
-  private change() {
-    if (typeof this.onChange === 'function') {
-      this.onChange(this);
-    }
   }
 }

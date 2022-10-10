@@ -1,6 +1,6 @@
 {
   "name": "@tanbo/color-picker",
-  "version": "0.1.4",
+  "version": "1.0.0-alpha.0",
   "description": "A color picker tool",
   "main": "./bundles/umd/public-api.js",
   "module": "./bundles/esm/public-api.js",
@@ -22,5 +22,10 @@
   },
   "bugs": {
     "url": "https://github.com/tbhuabi/color-picker.git/issues"
+  },
+  "dependencies": {
+    "@tanbo/color": "^0.1.1",
+    "@tanbo/css-themes": "^0.0.1",
+    "@tanbo/stream": "^1.1.8"
   }
 }
