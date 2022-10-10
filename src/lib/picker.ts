@@ -270,7 +270,7 @@ export class Picker {
     this.colorElements.forEach(el => {
       const v = el.getAttribute('data-color') || ''
       const hsl = any2Hsl(v)
-      if (hsl === 'unknown') {
+      if (hsl === 'unknown' || !this.hsl) {
         el.classList.remove('tanbo-color-picker-current')
         return
       }

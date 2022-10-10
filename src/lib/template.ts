@@ -1,8 +1,8 @@
 export function template(btnText: string, paletteText: string) {
   return `
 <div class="tanbo-color-picker-preset">
-  <div class="tanbo-color-picker-swatches"></div>
-  <div class="tanbo-color-picker-swatches"></div>
+  <div class="tanbo-color-picker-swatches" style="height: 50px"></div>
+  <div class="tanbo-color-picker-swatches" style="height: 118px;"></div>
   <div class="tanbo-color-picker-flex">
     <div class="tanbo-color-picker-swatches">
       <div data-color=""></div>
