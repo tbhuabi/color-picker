@@ -483,7 +483,7 @@ export class Picker {
       } else {
         this.hex = c;
       }
-      this.onChange.next(this);
+      this.onSelected.next(this);
     });
   }
 }
