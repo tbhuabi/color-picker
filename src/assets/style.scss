@@ -8,7 +8,7 @@
   user-select: none;
   position: relative;
   overflow: hidden;
-  height: 198px;
+  height: 244px;
 
   &.tanbo-color-picker-show-palette {
     height: 310px;
@@ -21,6 +21,10 @@
 
 .tanbo-color-picker-preset > div:first-child {
   margin-bottom: 5px;
+}
+
+.tanbo-color-picker-recent-text {
+  padding: 2px;
 }
 
 .tanbo-color-picker-flex {
@@ -58,8 +62,8 @@
   outline: none;
   color: #333;
   cursor: pointer;
-  padding-left: 0;
-
+  padding: 0;
+  line-height: 20px;
   &-wrap {
     height: 2em;
   }
@@ -67,6 +71,7 @@
   svg {
     width: 1em;
     height: 1em;
+    margin-top: -2px;
   }
 }
 

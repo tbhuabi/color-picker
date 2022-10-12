@@ -1,8 +1,10 @@
-export function template(btnText: string, paletteText: string) {
+export function template(btnText: string, paletteText: string, recentText: string, backText: string) {
   return `
 <div class="tanbo-color-picker-preset">
   <div class="tanbo-color-picker-swatches" style="height: 50px"></div>
   <div class="tanbo-color-picker-swatches" style="height: 118px;"></div>
+  <div class="tanbo-color-picker-recent-text">${recentText}</div>
+  <div class="tanbo-color-picker-swatches" style="height: 25px;"></div>
   <div class="tanbo-color-picker-flex">
     <div class="tanbo-color-picker-swatches">
       <div data-color=""></div>
@@ -15,7 +17,7 @@ export function template(btnText: string, paletteText: string) {
 <div class="tanbo-color-picker-menu">
   <div class="tanbo-color-picker-back-btn-wrap">
     <button type="button" class="tanbo-color-picker-back-btn">
-      <svg style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M497.92 165.12L422.4 89.6 0 512l422.4 422.4 75.52-75.52L151.04 512z"></path></svg>
+      <svg style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M497.92 165.12L422.4 89.6 0 512l422.4 422.4 75.52-75.52L151.04 512z"></path></svg>${backText}
     </button>
   </div>
   <div class="tanbo-color-picker-viewer">

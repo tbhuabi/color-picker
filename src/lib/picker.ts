@@ -13,6 +13,8 @@ export interface PickerOptions {
   value?: string;
   btnText?: string;
   paletteText?: string;
+  recentText?: string;
+  backText?: string;
 }
 
 export class Picker {
@@ -151,7 +153,6 @@ export class Picker {
   private alphaBar: HTMLElement;
   private alphaValue: HTMLElement;
   private alphaPoint: HTMLElement;
-
   private inputsWrap: HTMLElement;
   private hslInputs: HTMLInputElement[];
   private rgbInputs: HTMLInputElement[];
@@ -160,7 +161,9 @@ export class Picker {
   private switchBtn: HTMLElement;
   private menu: HTMLElement;
   private backBtn: HTMLElement;
+  private recentElement: HTMLElement;
 
+  private recentColorOptions: string[] = [];
   private writing = false;
 
   private colorElements: HTMLElement[] = []
@@ -175,7 +178,12 @@ export class Picker {
       this.container = selector;
     }
     this.host.classList.add('tanbo-color-picker');
-    this.host.innerHTML = template(options.btnText || '确定', options.paletteText || '调色盘');
+    this.host.innerHTML = template(
+      options.btnText || '确定',
+      options.paletteText || '调色盘',
+      options.recentText || '最近使用',
+      options.backText || '返回'
+    );
 
     this.container.appendChild(this.host);
     this.valueViewer = this.host.querySelector('.tanbo-color-picker-value-color');
@@ -199,6 +207,7 @@ export class Picker {
 
     this.mainColors = this.colorWrapper.children[0] as HTMLElement
     this.colors = this.colorWrapper.children[1] as HTMLElement
+    this.recentElement = this.colorWrapper.children[3] as HTMLElement
 
     if (Array.isArray(options.mainColors)) {
       this.addColor(options.mainColors, this.mainColors)
@@ -209,6 +218,34 @@ export class Picker {
     this.hex = options.value || '#f00';
 
     this.bindingEvents();
+
+    this.onSelected.subscribe(() => {
+      this.addRecentColor(this.hex)
+    })
+  }
+
+  addRecentColor(color: string) {
+    if (!color) {
+      return
+    }
+    this.recentColorOptions = this.recentColorOptions.filter(item => {
+      return item !== color;
+    });
+    this.recentColorOptions.unshift(color);
+    if (this.recentColorOptions.length >= 7) {
+      this.recentColorOptions.length = 7;
+    }
+    this.renderRecentColors()
+  }
+
+  private renderRecentColors() {
+    this.recentElement.innerHTML = ''
+    this.recentColorOptions.forEach((color) => {
+      const el = document.createElement('div')
+      el.style.background = color;
+      el.setAttribute('data-color', color);
+      this.recentElement.appendChild(el)
+    });
   }
 
   private addColor(colors: string[], host: HTMLElement) {
