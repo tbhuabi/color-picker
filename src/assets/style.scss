@@ -8,7 +8,6 @@
   user-select: none;
   position: relative;
   overflow: hidden;
-  height: 254px;
 
   &.tanbo-color-picker-show-palette {
     height: 310px;
@@ -82,7 +81,6 @@
 .tanbo-color-picker-menu {
   position: absolute;
   background-color: #fff;
-  width: 165px;
   padding: 6px;
   top: 100%;
   left: 0;
