@@ -8,7 +8,7 @@
   user-select: none;
   position: relative;
   overflow: hidden;
-  height: 244px;
+  height: 254px;
 
   &.tanbo-color-picker-show-palette {
     height: 310px;
@@ -25,6 +25,7 @@
 
 .tanbo-color-picker-recent-text {
   padding: 2px;
+  color: $color-gray-dark;
 }
 
 .tanbo-color-picker-flex {
@@ -41,10 +42,10 @@
   align-items: center;
   color: #333;
   cursor: pointer;
+  padding-right: 0;
 
   svg {
-    width: 20px;
-    margin-right: 5px;
+    width: 1em;
   }
 
   &:hover {
@@ -72,6 +73,9 @@
     width: 1em;
     height: 1em;
     margin-top: -2px;
+  }
+  &:hover {
+    color: $color-primary;
   }
 }
 
@@ -299,7 +303,7 @@
 
 .tanbo-color-picker-swatches {
   font-size: 0;
-  //padding-top: 3px;
+  padding-top: 3px;
   //background: repeating-linear-gradient(-45deg, #fefefe, #fefefe 5px, #fff 0, #fff 10px);
 
   > div {

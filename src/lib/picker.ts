@@ -239,13 +239,19 @@ export class Picker {
   }
 
   private renderRecentColors() {
-    this.recentElement.innerHTML = ''
-    this.recentColorOptions.forEach((color) => {
-      const el = document.createElement('div')
-      el.style.background = color;
-      el.setAttribute('data-color', color);
-      this.recentElement.appendChild(el)
-    });
+    let i = 0
+    while (i < 7) {
+      const color = this.recentColorOptions[i]
+      const el = this.recentElement.children[i] as HTMLElement
+      i++
+      if (color) {
+        el.style.background = color;
+        el.setAttribute('data-color', color);
+      } else {
+        el.style.background = ''
+        el.removeAttribute('data-color')
+      }
+    }
   }
 
   private addColor(colors: string[], host: HTMLElement) {

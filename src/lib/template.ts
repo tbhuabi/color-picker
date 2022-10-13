@@ -4,13 +4,20 @@ export function template(btnText: string, paletteText: string, recentText: strin
   <div class="tanbo-color-picker-swatches" style="height: 50px"></div>
   <div class="tanbo-color-picker-swatches" style="height: 118px;"></div>
   <div class="tanbo-color-picker-recent-text">${recentText}</div>
-  <div class="tanbo-color-picker-swatches" style="height: 25px;"></div>
+  <div class="tanbo-color-picker-swatches" style="height: 25px;">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
   <div class="tanbo-color-picker-flex">
     <div class="tanbo-color-picker-swatches">
       <div data-color=""></div>
     </div>
-    <button type="button" class="tanbo-color-picker-to-palette">
-      <svg style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M558.4 34.24a480 480 0 0 0-139.2 947.84h4.48a121.92 121.92 0 0 0 135.68-157.12C523.84 711.04 593.92 672 643.2 672h115.2c398.4 0 229.44-597.12-200-637.76zM160 384a96 96 0 1 1 96 96 96 96 0 0 1-96-96z m128 384a96 96 0 1 1 96-96 96 96 0 0 1-96 96z m224-448a96 96 0 1 1 96-96 96 96 0 0 1-96 96z m256 160a96 96 0 1 1 96-96 96 96 0 0 1-96 96z" fill="#231F20"></path></svg> ${paletteText}
+    <button type="button" class="tanbo-color-picker-to-palette">${paletteText}<svg style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path transform="rotate(180, 512, 512)" d="M497.92 165.12L422.4 89.6 0 512l422.4 422.4 75.52-75.52L151.04 512z"></path></svg>
     </button>
   </div>
 </div>
