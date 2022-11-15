@@ -1,6 +1,7 @@
 .tanbo-color-picker {
   display: inline-block;
   background-color: #fff;
+  text-align: left;
   width: 165px;
   font-size: 12px;
   box-sizing: content-box !important;
@@ -64,6 +65,7 @@
   cursor: pointer;
   padding: 0;
   line-height: 20px;
+
   &-wrap {
     height: 2em;
   }
@@ -73,6 +75,7 @@
     height: 1em;
     margin-top: -2px;
   }
+
   &:hover {
     color: $color-primary;
   }
@@ -319,9 +322,11 @@
     background-size: 10px 10px;
     background-position: 0 0, 5px 5px;
     box-sizing: border-box;
+    border-radius: 1px;
 
     &.tanbo-color-picker-current {
-      border: 1px solid #333333;
+      border: 1px solid rgba(0, 0, 0, .3);
+      box-shadow: none;
     }
 
     &[data-color=""] {
@@ -345,7 +350,7 @@
     }
 
     &:hover {
-      transform: scale(1.2);
+      transform: scale(1.1);
     }
   }
 }
