@@ -18,7 +18,9 @@ export default {
     }
   ],
   plugins: [
-    typescript(),
+    typescript({
+      tsconfig: './tsconfig-build.json'
+    }),
     postcss({
       extract: true
     }),

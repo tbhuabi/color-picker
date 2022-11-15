@@ -3,8 +3,8 @@
   "version": "1.0.3",
   "description": "",
   "main": "./bundles/index.js",
-  "module": "./bundles/index.js",
-  "typings": "./bundles/index.d.ts",
+  "module": "./bundles/index.esm.js",
+  "typings": "./bundles/public-api.d.ts",
   "scripts": {
     "start": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1",
